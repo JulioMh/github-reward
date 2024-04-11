@@ -1,31 +1,29 @@
 "use client";
 
+import { Loading } from "@/components/Loading";
 import { GitHubAccount } from "@/lib/data/github";
 import { GH_DATA_LS, useAuthStore } from "@/lib/store/authStore";
 import { useLocalStorage, useWallet } from "@solana/wallet-adapter-react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const route = useRouter();
   const { publicKey, disconnecting } = useWallet();
-  const [gitHubAccountLS, setGitHubAccountLS] = useLocalStorage<
-    GitHubAccount | undefined
-  >(GH_DATA_LS, undefined);
-
+  const [gitHubAccountLS, setGitHubAccountLS] =
+    useLocalStorage<GitHubAccount | null>(GH_DATA_LS, null);
   const { gitHubAccount, setGitHubAccount, reset } = useAuthStore();
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    if (disconnecting || !publicKey) {
-      setGitHubAccountLS(undefined);
-      reset();
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (!gitHubAccountLS) {
       route.push("/login");
-    } else if (!gitHubAccountLS && gitHubAccount) {
-      setGitHubAccountLS(gitHubAccount);
-    } else if (gitHubAccountLS && !gitHubAccount) {
+    } else if (!gitHubAccount) {
       setGitHubAccount(gitHubAccountLS);
-    } else if (!gitHubAccount && !gitHubAccountLS) {
-      route.push("/login");
     }
   }, [
     setGitHubAccount,
@@ -39,12 +37,14 @@ export default function Home() {
   ]);
 
   return (
-    <main className="flex flex-col items-center gap-8 mt-32">
-      <span>
-        {!gitHubAccount || !gitHubAccountLS
-          ? "Loading..."
-          : `Welcome ${gitHubAccount.name}!`}
-      </span>
-    </main>
+    <div className="flex flex-col items-center gap-8 mt-32">
+      {!isClient || !gitHubAccountLS ? (
+        <Loading />
+      ) : (
+        <span
+          suppressHydrationWarning
+        >{`Welcome ${gitHubAccountLS.name}!`}</span>
+      )}
+    </div>
   );
 }
