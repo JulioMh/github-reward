@@ -6,8 +6,17 @@ import { useLocalStorage } from "@solana/wallet-adapter-react";
 import { GH_DATA_LS, NONCE_LS, useAuthStore } from "@/lib/store/authStore";
 import { GitHubAccount, isValidGitHubAccount } from "@/lib/data/github";
 import { fetcher } from "@/utils/fetchers";
+import { Suspense } from "react";
 
-export default function LoginPage() {
+export default function GitHubConnectWrapper() {
+  return (
+    <Suspense>
+      <GitHubConnect />
+    </Suspense>
+  );
+}
+
+function GitHubConnect() {
   const route = useRouter();
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
