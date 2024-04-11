@@ -26,6 +26,12 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+@layer components {
+  .btn-primary {
+    @apply border-2 p-2 rounded-lg hover:shadow hover:shadow-white;
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
