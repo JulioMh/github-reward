@@ -1,10 +1,10 @@
 "use client";
-import { GitHubAccount } from "@/lib/data/github";
-import { GH_DATA_LS, useAuthStore } from "@/lib/store/authStore";
-import { useLocalStorage, useWallet } from "@solana/wallet-adapter-react";
+
+import { useWallet } from "@solana/wallet-adapter-react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
+import { Fetchers } from "@/utils/fetchers";
 
 const ReactUIWalletMultiButtonDynamic = dynamic(
   async () =>
@@ -16,28 +16,14 @@ export const Navbar = () => {
   const route = useRouter();
   const { disconnecting, publicKey, connecting } = useWallet();
   const triedToConnect = useRef(false);
-  const [_, setGitHubAccountLS] = useLocalStorage<GitHubAccount | null>(
-    GH_DATA_LS,
-    null
-  );
-  const { reset } = useAuthStore();
 
   useEffect(() => {
     if (disconnecting || (triedToConnect.current && !publicKey)) {
-      setGitHubAccountLS(null);
-      reset();
+      Fetchers.POST("/logout");
       route.push("/login");
     }
     if (connecting) triedToConnect.current = true;
-  }, [
-    reset,
-    disconnecting,
-    route,
-    setGitHubAccountLS,
-    publicKey,
-    connecting,
-    triedToConnect,
-  ]);
+  }, [disconnecting, route, publicKey, connecting, triedToConnect]);
 
   return (
     <nav className="flex fixed w-screen">

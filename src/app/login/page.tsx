@@ -1,18 +1,19 @@
 "use client";
+
+import { Button } from "@/components/Button";
 import { Loading } from "@/components/Loading";
-import { GitHubAccount } from "@/lib/data/github";
 import { useSignMsg } from "@/lib/hooks/useSignMsg";
-import { GH_DATA_LS, NONCE_LS, useAuthStore } from "@/lib/store/authStore";
 import { makeId } from "@/utils/string";
 import { useLocalStorage, useWallet } from "@solana/wallet-adapter-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Home() {
+  const route = useRouter();
   const [waitingForGitHub, setWaitingForGitHub] = useState(false);
   const { publicKey, signMessage } = useWallet();
   const [_, persistNonce] = useLocalStorage<string | undefined>(
-    NONCE_LS,
+    "nonce",
     undefined
   );
 
@@ -32,34 +33,30 @@ export default function Home() {
     signMsg(msg);
   };
 
+  const onConnect = () => {
+    setWaitingForGitHub(true);
+    route.push(
+      "https://github.com/login/oauth/authorize" +
+        `?client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID}` +
+        `&state=${msgSignature}`
+    );
+  };
+
   return (
     <div className="flex flex-col items-center gap-8">
       {!publicKey && <span>Connect your wallet</span>}
       {publicKey && !msgSignature && (
-        <button className="btn-primary" onClick={onSignIn}>
-          Sign In
-        </button>
+        <Button onClick={onSignIn}>Sign In</Button>
       )}
       {error && publicKey && (
-        <span className="text-red-500	text-sm	">
+        <span className="text-red-500	text-sm">
           Your signature is required to proceed, please try again
         </span>
       )}
       {publicKey &&
         msgSignature &&
         (!waitingForGitHub ? (
-          <a
-            className="btn-primary"
-            onClick={() => setWaitingForGitHub(true)}
-            href={
-              "https://github.com/login/oauth/authorize" +
-              `?client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID}` +
-              `&state=${msgSignature}`
-            }
-          >
-            {" "}
-            {"Connect with GitHub"}
-          </a>
+          <Button onClick={onConnect}>Connect with GitHub</Button>
         ) : (
           <Loading text="Connecting" />
         ))}
