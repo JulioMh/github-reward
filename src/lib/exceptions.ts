@@ -16,5 +16,5 @@ export const Exceptions: Record<ExceptionTypes, Exception> = {
 };
 
 export const isValidException = (object: any): object is Exception => {
-  return object.code && object.msg;
+  return object && object.code && object.msg;
 };

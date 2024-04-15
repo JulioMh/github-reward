@@ -28,7 +28,7 @@ function GitHubConnect() {
   const code = searchParams.get("code");
   const state = searchParams.get("state");
   const [nonce, setNonce] = useLocalStorage<string | null>("nonce", null);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState([false, ""]);
 
   const updateUser = async ({ id }: { id: string }) => {
     if (!publicKey) return;
@@ -37,7 +37,7 @@ function GitHubConnect() {
       { publicKey: publicKey.toString() },
     ]);
     if (!res.error) loggedIn();
-    else setError(true);
+    else setError([true, res.error]);
   };
 
   const loggedIn = () => {
@@ -62,8 +62,8 @@ function GitHubConnect() {
     Fetchers.GET
   );
 
-  if (isValidException(data) || error || swrError || paramsError) {
-    if (!error && data.code === Exceptions.account_in_use.code) {
+  if (isValidException(data) || error[0] || swrError || paramsError) {
+    if (!error[0] && data?.code === Exceptions.account_in_use.code) {
       return (
         <>
           <span>This account is linked to another wallet</span>
@@ -79,12 +79,23 @@ function GitHubConnect() {
     return (
       <>
         <span>
-          {data.error ?? "Your account information could not be retrieved"}
+          {data.error ??
+            (error[0] && error[1]) ??
+            "Your account information could not be retrieved"}
         </span>
-        <Loading text="We are trying again" />
-        <button className="btn-primary" onClick={() => route.push("/login")}>
-          If nothing happens, click here to start the process again
-        </button>
+        {error[0] ? (
+          <></>
+        ) : (
+          <>
+            <Loading text="We are trying again" />
+            <button
+              className="btn-primary"
+              onClick={() => route.push("/login")}
+            >
+              If nothing happens, click here to start the process again
+            </button>
+          </>
+        )}
       </>
     );
   }
