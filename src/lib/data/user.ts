@@ -5,6 +5,7 @@ export interface GitHubData {
 }
 
 export interface User {
+  id: string;
   publicKey: string;
   github: GitHubData;
 }

@@ -7,4 +7,12 @@ export class Fetchers {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}${url}`, { method: "POST" }).then(
       (r) => r.json()
     );
+  static PUT: Fetcher<any, [string, object]> = ([url, body]: [
+    string,
+    Object
+  ]) =>
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}${url}`, {
+      method: "PUT",
+      body: JSON.stringify(body),
+    }).then((r) => r.json());
 }
