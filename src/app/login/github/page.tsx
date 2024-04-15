@@ -62,7 +62,6 @@ function GitHubConnect() {
     Fetchers.GET
   );
 
-  if (!data) return <Loading text="Retrieving information" />;
   if (isValidException(data) || error || swrError || paramsError) {
     if (!error && data.code === Exceptions.account_in_use.code) {
       return (
@@ -89,5 +88,7 @@ function GitHubConnect() {
       </>
     );
   }
+  if (!data) return <Loading text="Retrieving information" />;
+
   loggedIn();
 }
