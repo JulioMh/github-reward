@@ -2,7 +2,7 @@
 import React, { FC, useCallback, useMemo } from "react";
 import {
   ConnectionProvider,
-  WalletProvider,
+  WalletProvider as WalletProviderPkg,
 } from "@solana/wallet-adapter-react";
 import {
   Adapter,
@@ -21,7 +21,7 @@ import { NodeProps } from "@/utils/props";
 // Default styles that can be overridden by your app
 require("@solana/wallet-adapter-react-ui/styles.css");
 
-export const Wallet: FC<NodeProps> = ({ children }) => {
+export const WalletProvider: FC<NodeProps> = ({ children }) => {
   // The network can be set to 'devnet', 'testnet', or 'mainnet-beta'.
   const network = WalletAdapterNetwork.Devnet;
 
@@ -50,11 +50,11 @@ export const Wallet: FC<NodeProps> = ({ children }) => {
 
   return (
     <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={wallets} autoConnect>
+      <WalletProviderPkg wallets={wallets} autoConnect>
         <MaterialUIWalletDialogProvider>
           <WalletModalProvider>{children}</WalletModalProvider>
         </MaterialUIWalletDialogProvider>
-      </WalletProvider>
+      </WalletProviderPkg>
     </ConnectionProvider>
   );
 };

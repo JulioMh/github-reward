@@ -42,7 +42,7 @@ function GitHubConnect() {
 
   const loggedIn = () => {
     setNonce(null);
-    route.push("/");
+    window.location.href = window.location.origin;
   };
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Wallet } from "@/components/Wallet";
+import { WalletProvider } from "@/components/WalletProvider";
 import { Notifier } from "@/components/Notifier";
 import dynamic from "next/dynamic";
 import { Navbar } from "@/components/Navbar";
@@ -21,12 +21,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Wallet>
+        <WalletProvider>
           <Notifier>
             <Navbar />
             <div className="p-24">{children}</div>
           </Notifier>
-        </Wallet>
+        </WalletProvider>
       </body>
     </html>
   );

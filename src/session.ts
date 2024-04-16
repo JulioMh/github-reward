@@ -15,7 +15,7 @@ export async function encrypt(payload: any) {
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("600 sec from now")
+    .setExpirationTime("300 sec from now")
     .sign(key);
 }
 
@@ -27,10 +27,14 @@ export async function decrypt(input: string): Promise<any> {
 }
 
 export async function login(user: User) {
-  const expires = new Date(Date.now() + 10 * 1000);
+  const expires = new Date(Date.now() + 5 * 60000);
   const session = await encrypt({ user, expires });
 
-  cookies().set("session", session, { expires, httpOnly: true });
+  cookies().set("session", session, {
+    domain: ".localhost",
+    expires,
+    httpOnly: true,
+  });
 }
 
 export async function logout() {
@@ -49,7 +53,7 @@ export async function updateSession(request: NextRequest) {
   if (!session) return;
 
   const parsed = await decrypt(session);
-  parsed.expires = new Date(Date.now() + 10 * 1000);
+  parsed.expires = new Date(Date.now() + 5 * 60000);
   const res = NextResponse.next();
   res.cookies.set({
     name: "session",

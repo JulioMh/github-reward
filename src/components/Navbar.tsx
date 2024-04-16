@@ -1,34 +1,23 @@
-"use client";
+import { getSession } from "@/session";
+import { WalletButton } from "./WalletButton";
 
-import { useWallet } from "@solana/wallet-adapter-react";
-import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
-import { Fetchers } from "@/utils/fetchers";
-
-const ReactUIWalletMultiButtonDynamic = dynamic(
-  async () =>
-    (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
-  { ssr: false }
-);
-
-export const Navbar = () => {
-  const route = useRouter();
-  const { disconnecting, publicKey, connecting } = useWallet();
-  const triedToConnect = useRef(false);
-
-  useEffect(() => {
-    if (disconnecting || (triedToConnect.current && !publicKey)) {
-      Fetchers.POST("/logout");
-      route.push("/login");
-    }
-    if (connecting) triedToConnect.current = true;
-  }, [disconnecting, route, publicKey, connecting, triedToConnect]);
+export const Navbar = async () => {
+  const session = await getSession();
 
   return (
     <nav className="flex fixed w-screen">
-      <div className="flex-1 flex justify-end m-8">
-        <ReactUIWalletMultiButtonDynamic />
+      <div className="flex-1 flex justify-start m-8">
+        {session?.user ? (
+          <>
+            <button className="pl-32">Repos</button>{" "}
+            <button className="pl-32">Rewards</button>
+          </>
+        ) : (
+          <></>
+        )}
+      </div>
+      <div className="flex-2 flex justify-end m-8">
+        <WalletButton />
       </div>
     </nav>
   );

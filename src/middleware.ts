@@ -1,5 +1,4 @@
 import { getSession, updateSession } from "@/session";
-import { redirect } from "next/dist/server/api-utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(request: NextRequest) {
