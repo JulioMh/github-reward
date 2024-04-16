@@ -31,9 +31,9 @@ export async function login(user: User) {
   const session = await encrypt({ user, expires });
 
   cookies().set("session", session, {
-    domain: ".localhost",
     expires,
     httpOnly: true,
+    ...(process.env.ENV === "local" ? { domain: ".localhost" } : {}),
   });
 }
 
