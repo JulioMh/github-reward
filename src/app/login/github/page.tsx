@@ -79,7 +79,7 @@ function GitHubConnect() {
     return (
       <>
         <span>
-          {data.error ??
+          {data?.error ??
             (error[0] && error[1]) ??
             "Your account information could not be retrieved"}
         </span>

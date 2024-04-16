@@ -11,11 +11,11 @@ interface Session {
 const secretKey = process.env.SECRET_KEY;
 const key = new TextEncoder().encode(secretKey);
 
-export async function encrypt(payload: any) {
+export async function encrypt(payload: any & { expires: Date }) {
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("5 sec from now")
+    .setExpirationTime(payload.expires)
     .sign(key);
 }
 
