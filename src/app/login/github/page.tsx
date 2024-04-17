@@ -33,7 +33,7 @@ function GitHubConnect() {
   const updateUser = async ({ id }: { id: string }) => {
     if (!publicKey) return;
     const res = await Fetchers.PUT([
-      `/user/${id}`,
+      `/user`,
       { publicKey: publicKey.toString() },
     ]);
     if (!res.error) loggedIn();

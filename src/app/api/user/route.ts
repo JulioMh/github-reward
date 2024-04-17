@@ -7,9 +7,9 @@ export const PUT = async (
   { params }: { params: { id: string } }
 ) => {
   const session = await getSession();
-  const id = params.id;
-  if (id !== session?.user.id)
+  if (!session || !session.user)
     return Response.json({ error: "Unauthorized operation" });
+  const id = session.user.id;
 
   const body = await req.json();
   const { publicKey } = body;

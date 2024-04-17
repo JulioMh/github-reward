@@ -9,8 +9,8 @@ export const Navbar = async () => {
       <div className="flex-1 flex justify-start m-8">
         {session?.user ? (
           <>
-            <button className="pl-32">Repos</button>{" "}
-            <button className="pl-32">Rewards</button>
+            <button className="ml-32">Repos</button>{" "}
+            <button className="ml-32">Rewards</button>
           </>
         ) : (
           <></>

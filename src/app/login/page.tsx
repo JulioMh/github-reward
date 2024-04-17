@@ -38,7 +38,7 @@ export default function Home() {
     route.push(
       "https://github.com/login/oauth/authorize" +
         `?client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID}` +
-        `&state=${msgSignature}`
+        `&state=${msgSignature}&scope=user:email`
     );
   };
 
