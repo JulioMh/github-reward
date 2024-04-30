@@ -1,8 +1,8 @@
-interface Repository {
+export interface Repository {
   owner: string;
   name: string;
-  approvedTimestamp: Date;
-  sha: string;
+  approvedDate: Date;
+  branch: string;
+  votes: number;
+  totalClaimed: number;
 }
-
-interface Commits {}

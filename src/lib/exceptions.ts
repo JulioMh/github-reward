@@ -1,5 +1,6 @@
 enum ExceptionTypes {
   account_in_use = "account_in_use",
+  repo_doesnt_exist = "repo_doesnt_exists",
 }
 
 export interface Exception {
@@ -11,7 +12,11 @@ export interface Exception {
 export const Exceptions: Record<ExceptionTypes, Exception> = {
   [ExceptionTypes.account_in_use]: {
     msg: "This GitHub account is linked to a different wallet",
-    code: 12,
+    code: 1,
+  },
+  [ExceptionTypes.repo_doesnt_exist]: {
+    msg: "This repository does not exist",
+    code: 2,
   },
 };
 

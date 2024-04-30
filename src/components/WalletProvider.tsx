@@ -1,8 +1,10 @@
 "use client";
-import React, { FC, useCallback, useMemo } from "react";
+import React, { FC, useMemo } from "react";
 import {
   ConnectionProvider,
   WalletProvider as WalletProviderPkg,
+  useAnchorWallet,
+  useConnection,
 } from "@solana/wallet-adapter-react";
 import {
   Adapter,
@@ -10,13 +12,11 @@ import {
   WalletError,
 } from "@solana/wallet-adapter-base";
 import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets";
-import {
-  WalletDialogProvider as MaterialUIWalletDialogProvider,
-  WalletMultiButton,
-} from "@solana/wallet-adapter-material-ui";
+import { WalletDialogProvider as MaterialUIWalletDialogProvider } from "@solana/wallet-adapter-material-ui";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
-import { clusterApiUrl } from "@solana/web3.js";
+import { clusterApiUrl, Connection } from "@solana/web3.js";
 import { NodeProps } from "@/utils/props";
+import { AnchorProvider } from "@coral-xyz/anchor";
 
 // Default styles that can be overridden by your app
 require("@solana/wallet-adapter-react-ui/styles.css");
@@ -49,7 +49,7 @@ export const WalletProvider: FC<NodeProps> = ({ children }) => {
   );
 
   return (
-    <ConnectionProvider endpoint={endpoint}>
+    <ConnectionProvider endpoint={"http://127.0.0.1:8899"}>
       <WalletProviderPkg wallets={wallets} autoConnect>
         <MaterialUIWalletDialogProvider>
           <WalletModalProvider>{children}</WalletModalProvider>

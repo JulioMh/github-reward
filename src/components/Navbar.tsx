@@ -1,5 +1,6 @@
 import { getSession } from "@/session";
 import { WalletButton } from "./WalletButton";
+import Link from "next/link";
 
 export const Navbar = async () => {
   const session = await getSession();
@@ -9,8 +10,12 @@ export const Navbar = async () => {
       <div className="flex-1 flex justify-start m-8">
         {session?.user ? (
           <>
-            <button className="ml-32">Repos</button>{" "}
-            <button className="ml-32">Rewards</button>
+            <Link href="/repos" className="ml-32">
+              Repos
+            </Link>{" "}
+            <Link href={""} className="ml-32">
+              Rewards
+            </Link>
           </>
         ) : (
           <></>

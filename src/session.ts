@@ -27,7 +27,7 @@ export async function decrypt(input: string): Promise<any> {
 }
 
 export async function login(user: User) {
-  const expires = new Date(Date.now() + 5 * 60000);
+  const expires = new Date(Date.now() + 60 * 60000);
   const session = await encrypt({ user, expires });
 
   cookies().set("session", session, {
@@ -53,7 +53,7 @@ export async function updateSession(request: NextRequest) {
   if (!session) return;
 
   const parsed = await decrypt(session);
-  parsed.expires = new Date(Date.now() + 5 * 60000);
+  parsed.expires = new Date(Date.now() + 60 * 60000);
   const res = NextResponse.next();
   res.cookies.set({
     name: "session",

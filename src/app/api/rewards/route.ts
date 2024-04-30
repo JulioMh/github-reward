@@ -1,3 +1,4 @@
+import { Repository } from "@/lib/data/repository";
 import { getSession } from "@/session";
 import { NextRequest } from "next/server";
 
@@ -6,16 +7,14 @@ const fetchCommits = async (
   {
     owner,
     name,
-    approvedTimestamp, //  ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ,
-    sha, // main, master
+    approvedDate, //  ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ,
+    branch,
   }: Repository
 ) => {
   return fetch(
-    `https://api.github.com/repos/${owner}/${name}/commits?since=${approvedTimestamp}&sha=${sha}&author=${author}`
+    `https://api.github.com/repos/${owner}/${name}/commits?since=${approvedDate}&sha=${branch}&author=${author}`
   ).then((res) => res.json());
 };
-
-const calculateReward = () => {};
 
 export const POST = async (req: NextRequest) => {
   const session = await getSession();
@@ -29,5 +28,9 @@ export const POST = async (req: NextRequest) => {
     repos.map((repo: Repository) => fetchCommits(user.github.name, repo))
   );
 
-  return Response.json({ commits });
+  return Response.json(
+    commits
+      .flatMap((a) => a)
+      .flatMap(({ sha, commit }) => ({ sha, msg: commit.message }))
+  );
 };
