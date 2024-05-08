@@ -1,4 +1,3 @@
-import { CreateRepoForm } from "@/components/CreateRepoForm";
 import { getSession } from "@/session";
 
 export default async function Home() {
@@ -7,7 +6,6 @@ export default async function Home() {
   return (
     <div className="flex flex-col items-center gap-8 mt-32">
       <span>{`Welcome ${session?.user.github.name}!`}</span>
-      <CreateRepoForm />
     </div>
   );
 }

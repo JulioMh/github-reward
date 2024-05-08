@@ -26,6 +26,12 @@ const StyledLaunchIcon = styled(LaunchIcon)(() => ({
   marginLeft: 8,
 }));
 
+export type Notify = (
+  variant: VariantType,
+  message: string,
+  signature?: string
+) => void;
+
 export function useNotify() {
   const { enqueueSnackbar } = useSnackbar();
 

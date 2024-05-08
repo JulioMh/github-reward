@@ -1,4 +1,5 @@
 import { Exceptions } from "@/lib/exceptions";
+import { Coupons } from "@/lib/smart-contract/coupons";
 import { getSession } from "@/session";
 import { NextRequest } from "next/server";
 
@@ -21,11 +22,12 @@ export const GET = async (req: NextRequest) => {
     return Response.json({ error: "Owner and Name required" });
 
   const response = await fetchRepo(owner, name);
-  console.log(response);
+
   if (response.message === "Not Found")
     return Response.json(Exceptions.repo_doesnt_exists);
 
-  // Sign coupon
+  const repo = { name, owner, branch: "main" };
+  const coupon = Coupons.addRepo(repo);
 
-  return Response.json({ response });
+  return Response.json({ payload: { coupon, repo } });
 };

@@ -1,5 +1,5 @@
 {
-  "address": "2F3RA1FWPnsWjmhqjwSLb5pjsPKRc8QaiUaQ5cLWduhM",
+  "address": "DwnuoJ5si2ryXWwduhnhMHgQsYKzrUxNh9g2ZqECkY96",
   "metadata": {
     "name": "smart_contract",
     "version": "0.1.0",
@@ -36,15 +36,15 @@
               },
               {
                 "kind": "arg",
-                "path": "payload.owner"
+                "path": "payload.repo.owner"
               },
               {
                 "kind": "arg",
-                "path": "payload.name"
+                "path": "payload.repo.name"
               },
               {
                 "kind": "arg",
-                "path": "payload.branch"
+                "path": "payload.repo.branch"
               }
             ]
           }
@@ -64,7 +64,7 @@
           "name": "payload",
           "type": {
             "defined": {
-              "name": "RepoPayload"
+              "name": "AddRepoPayload"
             }
           }
         }
@@ -255,6 +255,40 @@
       "args": []
     },
     {
+      "name": "verify_coupon",
+      "discriminator": [
+        78,
+        190,
+        99,
+        120,
+        173,
+        150,
+        19,
+        250
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "payload",
+          "type": {
+            "defined": {
+              "name": "VerifyCouponPayload"
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "vote_repo",
       "discriminator": [
         0,
@@ -389,9 +423,43 @@
       "code": 6000,
       "name": "VotedAlready",
       "msg": "User has already voted"
+    },
+    {
+      "code": 6001,
+      "name": "ClaimedAlready",
+      "msg": "Commits already claimed"
+    },
+    {
+      "code": 6002,
+      "name": "InvalidCoupon",
+      "msg": "This coupon is invalid"
     }
   ],
   "types": [
+    {
+      "name": "AddRepoPayload",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "repo",
+            "type": {
+              "defined": {
+                "name": "RepoPayload"
+              }
+            }
+          },
+          {
+            "name": "coupon",
+            "type": {
+              "defined": {
+                "name": "Coupon"
+              }
+            }
+          }
+        ]
+      }
+    },
     {
       "name": "ClaimRewardsPayload",
       "type": {
@@ -412,6 +480,38 @@
           {
             "name": "timestamp",
             "type": "u128"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Coupon",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "signature",
+            "type": "string"
+          },
+          {
+            "name": "recovery_id",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "OffChainData",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "a",
+            "type": "u8"
+          },
+          {
+            "name": "b",
+            "type": "string"
           }
         ]
       }
@@ -500,6 +600,30 @@
           {
             "name": "bump",
             "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VerifyCouponPayload",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "coupon",
+            "type": {
+              "defined": {
+                "name": "Coupon"
+              }
+            }
+          },
+          {
+            "name": "data",
+            "type": {
+              "defined": {
+                "name": "OffChainData"
+              }
+            }
           }
         ]
       }

@@ -1,4 +1,4 @@
-export interface Repository {
+export interface Repo {
   owner: string;
   name: string;
   approvedDate: Date;

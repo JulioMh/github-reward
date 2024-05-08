@@ -1,4 +1,4 @@
-import { Repository } from "@/lib/data/repository";
+import { Repository } from "@/lib/data/repo";
 import { getSession } from "@/session";
 import { NextRequest } from "next/server";
 
