@@ -1,4 +1,4 @@
-import { Repo } from "./repo";
+import { PublicKey } from "@solana/web3.js";
 
 export enum VoteType {
   up = "up",
@@ -6,7 +6,14 @@ export enum VoteType {
 }
 
 export interface Vote {
-  voter: string;
-  repo: Repo;
+  bump: number;
   voteType: VoteType;
+  voter: PublicKey;
+  repoPda: PublicKey;
+}
+
+export class VoteAdapter {
+  static fromResponse(response: any): Vote {
+    return { ...response, voteType: Object.keys(response.voteType)[0] };
+  }
 }

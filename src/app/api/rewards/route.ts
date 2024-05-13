@@ -1,4 +1,4 @@
-import { Repository } from "@/lib/data/repo";
+import { Repo } from "@/lib/data/repo";
 import { getSession } from "@/session";
 import { NextRequest } from "next/server";
 
@@ -7,12 +7,12 @@ const fetchCommits = async (
   {
     owner,
     name,
-    approvedDate, //  ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ,
+    approvedTimestamp, //  ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ,
     branch,
-  }: Repository
+  }: Repo
 ) => {
   return fetch(
-    `https://api.github.com/repos/${owner}/${name}/commits?since=${approvedDate}&sha=${branch}&author=${author}`
+    `https://api.github.com/repos/${owner}/${name}/commits?since=${approvedTimestamp}&sha=${branch}&author=${author}`
   ).then((res) => res.json());
 };
 
@@ -25,7 +25,7 @@ export const POST = async (req: NextRequest) => {
   const body = await req.json();
   const { repos } = body;
   const commits = await Promise.all(
-    repos.map((repo: Repository) => fetchCommits(user.github.name, repo))
+    repos.map((repo: Repo) => fetchCommits(user.github.name, repo))
   );
 
   return Response.json(

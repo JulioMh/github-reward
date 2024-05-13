@@ -1,6 +1,6 @@
-import { Repo } from "../data/repo";
+import { Repo, RepoPayload } from "../data/repo";
 import { VoteType } from "../data/vote";
-import { RepoPayload, VotePayload } from "./types";
+import { VotePayload } from "./types";
 
 export class Adapter {
   static repo(repo: Repo): RepoPayload {

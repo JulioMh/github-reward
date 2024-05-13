@@ -1,51 +1,51 @@
 import { Idl, Program } from "@coral-xyz/anchor";
 import {
   Connection,
-  RpcResponseAndContext,
   SignatureStatus,
   TransactionSignature,
 } from "@solana/web3.js";
-import { SetStateAction } from "react";
 import { Notify } from "../hooks/useNotify";
 
 export class TxnSignature {
   private connection: Connection;
   private program: Program<Idl>;
   private lastSig?: TransactionSignature;
+  private notify: Notify;
 
-  constructor(program: Program<Idl>, lastSig: TransactionSignature) {
+  constructor(
+    program: Program<Idl>,
+    lastSig: TransactionSignature,
+    notify: Notify
+  ) {
     this.program = program;
     this.connection = this.program.provider.connection;
     this.lastSig = lastSig;
+    this.notify = notify;
   }
 
-  private finished(status: SignatureStatus | null, notify: Notify): boolean {
+  private finished(status: SignatureStatus | null): boolean {
     if (status?.confirmationStatus === "finalized") {
-      notify("success", "Txn confirmed");
+      this.notify("success", "Txn confirmed");
       return true;
     }
     if (status?.err) {
-      notify("error", status.err.toString());
+      this.notify("error", status.err.toString());
       return true;
     }
     return false;
   }
 
-  async wait(
-    setWaiting: (param: SetStateAction<boolean>) => void,
-    notify: Notify,
-    navigate: () => void
-  ) {
+  async wait(callback: () => void) {
     const interval = setInterval(async () => {
       if (!this.lastSig) return;
-      setWaiting(true);
+
       const result = await this.connection.getSignatureStatus(this.lastSig, {
         searchTransactionHistory: true,
       });
-      if (this.finished(result.value, notify)) {
+
+      if (this.finished(result.value)) {
         clearInterval(interval);
-        setWaiting(false);
-        return navigate();
+        return callback();
       }
     }, 1000);
   }

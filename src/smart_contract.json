@@ -1,5 +1,5 @@
 {
-  "address": "DwnuoJ5si2ryXWwduhnhMHgQsYKzrUxNh9g2ZqECkY96",
+  "address": "HsnZigsHmmBfrTFSuLmZFfjjEpESRcjR1rasrNC6Jz2",
   "metadata": {
     "name": "smart_contract",
     "version": "0.1.0",
@@ -582,12 +582,8 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "user",
-            "type": "pubkey"
-          },
-          {
-            "name": "repo_pda",
-            "type": "pubkey"
+            "name": "bump",
+            "type": "u8"
           },
           {
             "name": "last_claim",
@@ -598,8 +594,12 @@
             "type": "u128"
           },
           {
-            "name": "bump",
-            "type": "u8"
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "repo_pda",
+            "type": "pubkey"
           }
         ]
       }
@@ -634,12 +634,8 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "voter",
-            "type": "pubkey"
-          },
-          {
-            "name": "repo_pda",
-            "type": "pubkey"
+            "name": "bump",
+            "type": "u8"
           },
           {
             "name": "vote_type",
@@ -650,8 +646,12 @@
             }
           },
           {
-            "name": "bump",
-            "type": "u8"
+            "name": "repo_pda",
+            "type": "pubkey"
+          },
+          {
+            "name": "voter",
+            "type": "pubkey"
           }
         ]
       }

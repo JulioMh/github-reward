@@ -1,7 +1,8 @@
 import { keccak256, toBuffer, ecsign } from "ethereumjs-utils";
-import { Coupon, RepoPayload } from "./types";
+import { Coupon } from "./types";
 import * as borsh from "borsh";
 import { repoSchema } from "./schemas";
+import { Repo, RepoAdapter, RepoPayload } from "../data/repo";
 
 export class Coupons {
   private static hash(values: any): string {
@@ -25,7 +26,7 @@ export class Coupons {
   }
 
   static addRepo(repo: RepoPayload): Coupon {
-    const serialized = borsh.serialize(repoSchema, repo);
+    const serialized = RepoAdapter.serialize(repo);
     return Coupons.build(serialized);
   }
 }

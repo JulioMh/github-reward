@@ -1,3 +1,5 @@
+import { RepoPayload } from "../data/repo";
+
 export interface Coupon {
   signature: string;
   recoveryId: number;
@@ -14,12 +16,6 @@ export interface ClaimRewardPayload extends WithCoupon {
   repo: RepoPayload;
   commits: number;
   timestamp: number;
-}
-
-export interface RepoPayload {
-  name: string;
-  owner: string;
-  branch: string;
 }
 
 export type VotePayload = {
