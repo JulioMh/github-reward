@@ -35,6 +35,9 @@ export const RepoRow = ({
       <td>{repo.votes.toNumber()}</td>
       {repo.approved ? (
         <>
+          <td>
+            {new Date(repo.approvedTimestamp.toNumber()).toLocaleDateString()}
+          </td>
           <td>{repo.subscribers.toNumber()}</td>
           <td>{repo.totalClaimed.toNumber()}</td>
           <td>{subscription ? subscription.totalClaimed.toNumber() : "-"}</td>

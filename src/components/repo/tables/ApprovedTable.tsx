@@ -22,6 +22,7 @@ export default function ApprovedTable({
           <th>Owner</th>
           <th>Branch</th>
           <th>Votes</th>
+          <th>Approved</th>
           <th>Subscribers</th>
           <th>Total Issued</th>
           <th>Total Claimed</th>
