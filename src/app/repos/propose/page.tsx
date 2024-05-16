@@ -28,7 +28,7 @@ export default function ProposePage() {
       `/repos?owner=${owner}&name=${name}&branch=${branch}`
     );
 
-    const tx = await client.instructions.addRepo(payload);
+    const tx = await client.instructions.propose(payload);
 
     await tx.wait(() => route.push("/repos"));
   };

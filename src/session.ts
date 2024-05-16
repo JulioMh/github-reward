@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { User } from "./lib/data/user";
 
-interface Session {
+export interface Session {
   user: User;
   expires: Date;
 }

@@ -34,7 +34,7 @@ export const VoteAction = ({
 
   const onVote = async (voteType: VoteType) => {
     setWaiting(true);
-    const tx = await client.instructions.voteRepo(repo, voteType);
+    const tx = await client.instructions.vote(repo, voteType);
     await tx.wait(() => {
       setWaiting(false);
       refetch();

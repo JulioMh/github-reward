@@ -1,5 +1,5 @@
 export interface GitHubData {
-  id: string;
+  id: number;
   name: string;
   accessToken: string;
 }

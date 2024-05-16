@@ -4,12 +4,20 @@ import { Loading } from "@/components/Loading";
 import { useProgram } from "@/lib/hooks/useProgram";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import { RepoRow } from "@/components/repo/RepoRow";
+
 import { PublicKey } from "@solana/web3.js";
 import { Repo } from "@/lib/data/repo";
+import ProposedTable from "@/components/repo/tables/ProposedTable";
+import ApprovedTable from "@/components/repo/tables/ApprovedTable";
+
+enum TableType {
+  approved = "Approved",
+  proposed = "Proposed",
+}
 
 export default function Repos() {
   const { client } = useProgram();
+  const [tableType, setTableType] = useState(TableType.approved);
   const [repos, setRepos] = useState<Repo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -32,29 +40,39 @@ export default function Repos() {
 
   return (
     <div className="flex flex-col items-stretch mt-16 gap-8">
-      <Link className="self-start btn-primary" href={"/repos/propose"}>
-        Propose repo
-      </Link>
-      <table className="table-auto self-center w-full border-separate border-spacing-2">
-        <thead className="text-left">
-          <tr>
-            <th>Name</th>
-            <th>Owner</th>
-            <th>Branch</th>
-            <th>Votes</th>
-          </tr>
-        </thead>
-        <tbody>
-          {repos.map((repo, i) => (
-            <RepoRow
-              key={i}
-              client={client!}
-              repo={repo}
-              refetch={() => refetchItem(repo.publicKey, i)}
-            />
-          ))}
-        </tbody>
-      </table>
+      <div className="flex flex-row justify-between">
+        <Link className="self-start btn-primary" href={"/repos/propose"}>
+          Propose repo
+        </Link>
+        <select
+          className="border-white bg-black text-center"
+          name="select"
+          onChange={(e) =>
+            setTableType(
+              Object.values(TableType).find(
+                (target) => target === e.target.value
+              )!
+            )
+          }
+        >
+          <option>{TableType.approved}</option>
+          <option>{TableType.proposed}</option>
+        </select>
+      </div>
+      {tableType === TableType.proposed && client && (
+        <ProposedTable
+          repos={repos.filter((e) => !e.approved)}
+          refetch={refetchItem}
+          client={client}
+        />
+      )}
+      {tableType === TableType.approved && client && (
+        <ApprovedTable
+          repos={repos.filter((e) => e.approved)}
+          refetch={refetchItem}
+          client={client}
+        />
+      )}
       {loading && <Loading text="Fetching from blockchain" />}
     </div>
   );

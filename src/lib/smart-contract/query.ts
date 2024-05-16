@@ -9,10 +9,12 @@ import { Repo } from "../data/repo";
 import { PublicKey } from "@solana/web3.js";
 import { AnchorWallet } from "@solana/wallet-adapter-react";
 import { Vote, VoteAdapter } from "../data/vote";
+import { Subscription } from "../data/subscription";
 
 interface Accounts {
   repo: AccountClient;
   vote: AccountClient;
+  subscription: AccountClient;
 }
 
 interface Responses<T> {
@@ -72,6 +74,32 @@ export class Query {
     } catch (e) {
       console.log((e as unknown as AnchorError).message);
       return null;
+    }
+  }
+
+  async getSubscription(
+    userId: number,
+    repo: Repo
+  ): Promise<Subscription | undefined> {
+    const [subPda] = web3.PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("sub"),
+        Buffer.from(userId.toString()),
+        repo.publicKey.toBuffer(),
+      ],
+      this.program.programId
+    );
+    console.log(subPda);
+
+    try {
+      const account = await this.accounts.subscription.fetch(subPda);
+      return this.adapt<Subscription>({
+        account,
+        publicKey: subPda,
+      });
+    } catch (e) {
+      console.log((e as unknown as AnchorError).message);
+      return undefined;
     }
   }
 

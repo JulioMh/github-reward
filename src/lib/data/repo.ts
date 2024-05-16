@@ -15,6 +15,7 @@ export interface Repo {
   approvedTimestamp: anchor.BN;
   votes: anchor.BN;
   totalClaimed: anchor.BN;
+  subscribers: anchor.BN;
   bump: number;
   proposedTimestamp: anchor.BN;
   approved: boolean;
