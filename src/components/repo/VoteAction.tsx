@@ -6,25 +6,23 @@ import ThumbDownOutline from "@mui/icons-material/ThumbDownOffAlt";
 import ThumbDown from "@mui/icons-material/ThumbDownAlt";
 import { useCallback, useEffect, useState } from "react";
 import { Vote, VoteType } from "@/lib/data/vote";
-import { useNotify } from "@/lib/hooks/useNotify";
-import { Loading } from "../Loading";
+import { useProgramStore } from "../providers/SmartContractProvider";
+import { useLoading } from "@/lib/hooks/useLoading";
 
 export const VoteAction = ({
-  client,
   repo,
   refetch,
 }: {
-  client: SmartContract;
   repo: Repo;
   refetch: () => void;
 }) => {
+  const { client } = useProgramStore();
+  const { sign, query, confirmation, loading } = useLoading();
   const [vote, setVote] = useState<Vote | null>();
-  const [waiting, setWaiting] = useState(false);
-  const notify = useNotify();
 
   const fetch = useCallback(async () => {
     if (!client) return;
-    const vote = await client.query.getVote(repo);
+    const vote = await query(() => client.query.getVote(repo));
     setVote(vote);
   }, [client, repo]);
 
@@ -33,12 +31,10 @@ export const VoteAction = ({
   }, [fetch, repo]);
 
   const onVote = async (voteType: VoteType) => {
-    setWaiting(true);
-    const tx = await client.instructions.vote(repo, voteType);
-    await tx.wait(() => {
-      setWaiting(false);
-      refetch();
-    });
+    if (!client) return;
+    const tx = await sign(() => client.instructions.vote(repo, voteType));
+    if (!tx) return;
+    await confirmation(tx, refetch);
   };
 
   const controllers = (
@@ -56,9 +52,5 @@ export const VoteAction = ({
     </>
   );
 
-  return (
-    <div className="flex gap-4">
-      {waiting ? <Loading text="Waiting" /> : controllers}
-    </div>
-  );
+  return <div className="flex gap-4">{loading ? loading : controllers}</div>;
 };

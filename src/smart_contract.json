@@ -1,5 +1,5 @@
 {
-  "address": "2QDECqPyjFKrTxC2cJciA6iERVHHh7bHELzD5WRgScPk",
+  "address": "723BMbtTAvNdufyTqWPSyoPDJkEpYBtHYrgtp4pYzh4G",
   "metadata": {
     "name": "smart_contract",
     "version": "0.1.0",
@@ -9,16 +9,7 @@
   "instructions": [
     {
       "name": "add_repo",
-      "discriminator": [
-        68,
-        182,
-        211,
-        108,
-        247,
-        131,
-        93,
-        82
-      ],
+      "discriminator": [68, 182, 211, 108, 247, 131, 93, 82],
       "accounts": [
         {
           "name": "repo",
@@ -27,12 +18,7 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [
-                  114,
-                  101,
-                  112,
-                  111
-                ]
+                "value": [114, 101, 112, 111]
               },
               {
                 "kind": "arg",
@@ -72,16 +58,7 @@
     },
     {
       "name": "claim_rewards",
-      "discriminator": [
-        4,
-        144,
-        132,
-        71,
-        116,
-        23,
-        151,
-        80
-      ],
+      "discriminator": [4, 144, 132, 71, 116, 23, 151, 80],
       "accounts": [
         {
           "name": "signer",
@@ -95,12 +72,7 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [
-                  114,
-                  101,
-                  112,
-                  111
-                ]
+                "value": [114, 101, 112, 111]
               },
               {
                 "kind": "arg",
@@ -124,11 +96,7 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [
-                  115,
-                  117,
-                  98
-                ]
+                "value": [115, 117, 98]
               },
               {
                 "kind": "arg",
@@ -148,13 +116,7 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [
-                  116,
-                  111,
-                  107,
-                  101,
-                  110
-                ]
+                "value": [116, 111, 107, 101, 110]
               }
             ]
           }
@@ -193,16 +155,7 @@
     },
     {
       "name": "init_token",
-      "discriminator": [
-        9,
-        187,
-        206,
-        103,
-        139,
-        126,
-        246,
-        181
-      ],
+      "discriminator": [9, 187, 206, 103, 139, 126, 246, 181],
       "accounts": [
         {
           "name": "admin",
@@ -217,13 +170,7 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [
-                  116,
-                  111,
-                  107,
-                  101,
-                  110
-                ]
+                "value": [116, 111, 107, 101, 110]
               }
             ]
           }
@@ -253,16 +200,7 @@
     },
     {
       "name": "subscribe",
-      "discriminator": [
-        254,
-        28,
-        191,
-        138,
-        156,
-        179,
-        183,
-        53
-      ],
+      "discriminator": [254, 28, 191, 138, 156, 179, 183, 53],
       "accounts": [
         {
           "name": "repo",
@@ -271,12 +209,7 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [
-                  114,
-                  101,
-                  112,
-                  111
-                ]
+                "value": [114, 101, 112, 111]
               },
               {
                 "kind": "arg",
@@ -300,11 +233,7 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [
-                  115,
-                  117,
-                  98
-                ]
+                "value": [115, 117, 98]
               },
               {
                 "kind": "arg",
@@ -340,16 +269,7 @@
     },
     {
       "name": "verify_coupon",
-      "discriminator": [
-        78,
-        190,
-        99,
-        120,
-        173,
-        150,
-        19,
-        250
-      ],
+      "discriminator": [78, 190, 99, 120, 173, 150, 19, 250],
       "accounts": [
         {
           "name": "signer",
@@ -374,16 +294,7 @@
     },
     {
       "name": "vote_repo",
-      "discriminator": [
-        0,
-        81,
-        5,
-        105,
-        242,
-        99,
-        182,
-        117
-      ],
+      "discriminator": [0, 81, 5, 105, 242, 99, 182, 117],
       "accounts": [
         {
           "name": "repo",
@@ -392,12 +303,7 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [
-                  114,
-                  101,
-                  112,
-                  111
-                ]
+                "value": [114, 101, 112, 111]
               },
               {
                 "kind": "arg",
@@ -421,12 +327,7 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [
-                  118,
-                  111,
-                  116,
-                  101
-                ]
+                "value": [118, 111, 116, 101]
               },
               {
                 "kind": "account",
@@ -464,42 +365,15 @@
   "accounts": [
     {
       "name": "Repo",
-      "discriminator": [
-        214,
-        15,
-        57,
-        132,
-        228,
-        152,
-        190,
-        235
-      ]
+      "discriminator": [214, 15, 57, 132, 228, 152, 190, 235]
     },
     {
       "name": "Subscription",
-      "discriminator": [
-        64,
-        7,
-        26,
-        135,
-        102,
-        132,
-        98,
-        33
-      ]
+      "discriminator": [64, 7, 26, 135, 102, 132, 98, 33]
     },
     {
       "name": "Vote",
-      "discriminator": [
-        96,
-        91,
-        104,
-        57,
-        145,
-        35,
-        172,
-        155
-      ]
+      "discriminator": [96, 91, 104, 57, 145, 35, 172, 155]
     }
   ],
   "errors": [

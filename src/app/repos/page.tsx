@@ -1,7 +1,6 @@
 "use client";
 
 import { Loading } from "@/components/Loading";
-import { useProgram } from "@/lib/hooks/useProgram";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
@@ -9,23 +8,35 @@ import { PublicKey } from "@solana/web3.js";
 import { Repo } from "@/lib/data/repo";
 import ProposedTable from "@/components/repo/tables/ProposedTable";
 import ApprovedTable from "@/components/repo/tables/ApprovedTable";
+import { useProgramStore } from "@/components/providers/SmartContractProvider";
+import { useLoading } from "@/lib/hooks/useLoading";
+import { useSearchParams } from "next/navigation";
 
-enum TableType {
+export enum TableType {
   approved = "Approved",
   proposed = "Proposed",
 }
 
+const fromStringToTableType = (value: string | null): TableType => {
+  return (
+    Object.values(TableType).find(
+      (target) => target.toLowerCase() === value?.toLowerCase()
+    ) ?? TableType.approved
+  );
+};
+
 export default function Repos() {
-  const { client } = useProgram();
-  const [tableType, setTableType] = useState(TableType.approved);
+  const { client } = useProgramStore();
+  const { query, loading } = useLoading();
+  const params = useSearchParams();
+  const table = params.get("table");
+  const [tableType, setTableType] = useState(fromStringToTableType(table));
   const [repos, setRepos] = useState<Repo[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
 
   const fetch = useCallback(async () => {
     if (!client) return;
-    const repos = await client.query.getRepos();
+    const repos = await query(() => client.query.getRepos());
     setRepos(repos);
-    setLoading(false);
   }, [client]);
 
   useEffect(() => {
@@ -34,7 +45,7 @@ export default function Repos() {
 
   const refetchItem = async (publicKey: PublicKey, index: number) => {
     if (!client) return;
-    const newRepo = await client.query.refetchRepo(publicKey);
+    const newRepo = await query(() => client.query.refetchRepo(publicKey));
     setRepos(repos.map((repo, i) => (i === index ? newRepo : repo)));
   };
 
@@ -47,13 +58,8 @@ export default function Repos() {
         <select
           className="border-white bg-black text-center"
           name="select"
-          onChange={(e) =>
-            setTableType(
-              Object.values(TableType).find(
-                (target) => target === e.target.value
-              )!
-            )
-          }
+          value={tableType}
+          onChange={(e) => setTableType(fromStringToTableType(e.target.value))}
         >
           <option>{TableType.approved}</option>
           <option>{TableType.proposed}</option>
@@ -63,17 +69,15 @@ export default function Repos() {
         <ProposedTable
           repos={repos.filter((e) => !e.approved)}
           refetch={refetchItem}
-          client={client}
         />
       )}
       {tableType === TableType.approved && client && (
         <ApprovedTable
           repos={repos.filter((e) => e.approved)}
           refetch={refetchItem}
-          client={client}
         />
       )}
-      {loading && <Loading text="Fetching from blockchain" />}
+      {loading}
     </div>
   );
 }

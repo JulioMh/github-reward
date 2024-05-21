@@ -7,11 +7,9 @@ import { SmartContract } from "@/lib/smart-contract";
 
 export default function ProposedTable({
   repos,
-  client,
   refetch,
 }: {
   repos: Repo[];
-  client: SmartContract;
   refetch: (publicKey: PublicKey, index: number) => void;
 }) {
   return (
@@ -28,7 +26,6 @@ export default function ProposedTable({
         {repos.map((repo, i) => (
           <RepoRow
             key={i}
-            client={client!}
             repo={repo}
             refetch={() => refetch(repo.publicKey, i)}
           />

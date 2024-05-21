@@ -89,7 +89,6 @@ export class Query {
       ],
       this.program.programId
     );
-    console.log(subPda);
 
     try {
       const account = await this.accounts.subscription.fetch(subPda);

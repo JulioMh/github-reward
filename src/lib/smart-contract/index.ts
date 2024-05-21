@@ -3,6 +3,9 @@ import { Instructions } from "./instructions";
 import { AnchorWallet } from "@solana/wallet-adapter-react";
 import { Query } from "./query";
 import { Notify } from "../hooks/useNotify";
+export type StateManagers = {
+  notify: Notify;
+};
 
 export class SmartContract {
   private static instance: SmartContract;
@@ -12,19 +15,19 @@ export class SmartContract {
   private constructor(
     program: Program<Idl>,
     wallet: AnchorWallet,
-    notify: Notify
+    state: StateManagers
   ) {
-    this.instructions = Instructions.getInstructions(program, wallet, notify);
+    this.instructions = Instructions.getInstructions(program, wallet, state);
     this.query = Query.getQuery(program, wallet);
   }
 
   static getSmartContract(
     program: Program<Idl>,
     wallet: AnchorWallet,
-    notify: Notify
+    state: StateManagers
   ): SmartContract {
     if (!SmartContract.instance) {
-      SmartContract.instance = new SmartContract(program, wallet, notify);
+      SmartContract.instance = new SmartContract(program, wallet, state);
     }
 
     return SmartContract.instance;

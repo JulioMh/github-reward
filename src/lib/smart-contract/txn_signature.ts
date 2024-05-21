@@ -4,38 +4,38 @@ import {
   SignatureStatus,
   TransactionSignature,
 } from "@solana/web3.js";
-import { Notify } from "../hooks/useNotify";
+import { StateManagers } from ".";
 
 export class TxnSignature {
   private connection: Connection;
   private program: Program<Idl>;
   private lastSig?: TransactionSignature;
-  private notify: Notify;
+  private state: StateManagers;
 
   constructor(
     program: Program<Idl>,
     lastSig: TransactionSignature,
-    notify: Notify
+    state: StateManagers
   ) {
     this.program = program;
     this.connection = this.program.provider.connection;
     this.lastSig = lastSig;
-    this.notify = notify;
+    this.state = state;
   }
 
   private finished(status: SignatureStatus | null): boolean {
     if (status?.confirmationStatus === "finalized") {
-      this.notify("success", "Txn confirmed");
+      this.state.notify("success", "Txn confirmed");
       return true;
     }
     if (status?.err) {
-      this.notify("error", status.err.toString());
+      this.state.notify("error", status.err.toString());
       return true;
     }
     return false;
   }
 
-  async wait(callback: () => void) {
+  async wait(callback: () => void): Promise<NodeJS.Timeout> {
     const interval = setInterval(async () => {
       if (!this.lastSig) return;
 
@@ -48,6 +48,7 @@ export class TxnSignature {
         return callback();
       }
     }, 1000);
+    return interval;
   }
 
   async showLogs() {

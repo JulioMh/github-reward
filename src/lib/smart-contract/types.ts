@@ -1,3 +1,4 @@
+import * as anchor from "@coral-xyz/anchor";
 import { RepoPayload } from "../data/repo";
 
 export interface Coupon {
@@ -20,5 +21,6 @@ export interface ClaimRewardPayload extends WithCoupon {
 
 export type VotePayload = {
   repo: RepoPayload;
+  timestamp: anchor.BN;
   voteType: Record<string, object>;
 };

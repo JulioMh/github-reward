@@ -7,11 +7,9 @@ import { SmartContract } from "@/lib/smart-contract";
 
 export default function ApprovedTable({
   repos,
-  client,
   refetch,
 }: {
   repos: Repo[];
-  client: SmartContract;
   refetch: (publicKey: PublicKey, index: number) => void;
 }) {
   return (
@@ -24,15 +22,14 @@ export default function ApprovedTable({
           <th>Votes</th>
           <th>Approved</th>
           <th>Subscribers</th>
-          <th>Total Issued</th>
-          <th>Total Claimed</th>
+          <th>Total Rewards</th>
+          <th>Your Rewards</th>
         </tr>
       </thead>
       <tbody>
         {repos.map((repo, i) => (
           <RepoRow
             key={i}
-            client={client!}
             repo={repo}
             refetch={() => refetch(repo.publicKey, i)}
           />

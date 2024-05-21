@@ -1,19 +1,15 @@
 import { Repo } from "@/lib/data/repo";
-import { SmartContract } from "@/lib/smart-contract";
-
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { VoteAction } from "../VoteAction";
-import { SubscriptionAction } from "../SubscriptonAction";
+import { SubscriptionAction } from "../SubscriptionAction";
 import { Subscription } from "@/lib/data/subscription";
 import { useState } from "react";
 
 export const RepoRow = ({
   repo,
-  client,
   refetch,
 }: {
   repo: Repo;
-  client: SmartContract;
   refetch: () => void;
 }) => {
   const [subscription, setSubscription] = useState<Subscription>();
@@ -47,17 +43,17 @@ export const RepoRow = ({
       )}
 
       <td>
-        {repo.approved ? (
-          <SubscriptionAction
-            client={client}
-            repo={repo}
-            refetch={refetch}
-            subscription={subscription}
-            setSubscription={setSubscription}
-          />
-        ) : (
-          <VoteAction client={client} repo={repo} refetch={refetch} />
-        )}
+        <div className="flex flex-row justify-between">
+          <VoteAction repo={repo} refetch={refetch} />
+          {repo.approved && (
+            <SubscriptionAction
+              repo={repo}
+              refetch={refetch}
+              subscription={subscription}
+              setSubscription={setSubscription}
+            />
+          )}
+        </div>
       </td>
     </tr>
   );

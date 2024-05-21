@@ -2,35 +2,40 @@
 
 import { Button } from "@/components/Button";
 import { Loading } from "@/components/Loading";
+import { useProgramStore } from "@/components/providers/SmartContractProvider";
+import { useLoading } from "@/lib/hooks/useLoading";
 import { useNotify } from "@/lib/hooks/useNotify";
-import { useProgram } from "@/lib/hooks/useProgram";
 import { Fetchers } from "@/utils/fetchers";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { TableType } from "../page";
 
 type Branch = { name: string; protected: boolean };
 
 export default function ProposePage() {
   const route = useRouter();
-  const { client } = useProgram();
+  const { query, sign, confirmation, loading } = useLoading();
+  const client = useProgramStore((state) => state.client);
   const notify = useNotify();
 
   const [[owner, name], setRepo] = useState<[string, string]>(["", ""]);
   const [branch, setBranch] = useState<string>();
   const [branches, setBranches] = useState<string[]>([]);
   const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const onSubmit = async () => {
     if (!client || !owner || !name || !branch) return;
-    setLoading(true);
-    const { payload } = await Fetchers.GET(
-      `/repos?owner=${owner}&name=${name}&branch=${branch}`
+
+    const { payload } = await query<any>(() =>
+      Fetchers.GET(`/repos?owner=${owner}&name=${name}&branch=${branch}`)
     );
 
-    const tx = await client.instructions.propose(payload);
+    const tx = await sign(() => client.instructions.propose(payload));
+    if (!tx) return;
 
-    await tx.wait(() => route.push("/repos"));
+    await confirmation(tx, () =>
+      route.push(`/repos?table=${TableType.proposed}`)
+    );
   };
 
   const validate = async (e: any) => {
@@ -52,14 +57,12 @@ export default function ProposePage() {
   };
 
   const fetchBranches = async (owner: string, name: string) => {
-    setLoading(true);
     const data = await fetch(
       `https://api.github.com/repos/${owner}/${name}/branches`
     ).then((r) => r.json());
 
     if (data.message === "Not Found") {
       notify("error", "This repo either does not exist or is private");
-      setLoading(false);
       return;
     }
     const branches = data
@@ -68,7 +71,6 @@ export default function ProposePage() {
 
     setBranch(branches[0]);
     setBranches(branches);
-    setLoading(false);
   };
 
   return (
@@ -102,7 +104,7 @@ export default function ProposePage() {
         <></>
       )}
       {loading ? (
-        <Loading text={"Loading"} />
+        loading
       ) : (
         <Button onClick={onSubmit} disabled={error || owner === "" || !branch}>
           Propose

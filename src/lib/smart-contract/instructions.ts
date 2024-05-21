@@ -5,73 +5,84 @@ import { VoteType } from "../data/vote";
 import { AnchorWallet } from "@solana/wallet-adapter-react";
 import { AddRepoPayload, Coupon } from "./types";
 import { TxnSignature } from "./txn_signature";
-import { Notify } from "../hooks/useNotify";
 import * as anchor from "@coral-xyz/anchor";
+import { StateManagers } from ".";
 
 export class Instructions {
   private static instance: Instructions;
   private program: Program<Idl>;
   private wallet: AnchorWallet;
-  private notify: Notify;
+  private state: StateManagers;
 
   private constructor(
     program: Program<Idl>,
     wallet: AnchorWallet,
-    notify: Notify
+    state: StateManagers
   ) {
     this.program = program;
     this.wallet = wallet;
-    this.notify = notify;
+    this.state = state;
   }
 
-  async propose(payload: AddRepoPayload): Promise<TxnSignature> {
-    console.log(this.program.programId);
-    const sig = await this.program.methods
-      .addRepo(payload)
-      .accounts({ publisher: this.wallet.publicKey })
-      .rpc();
-
-    return new TxnSignature(this.program, sig, this.notify);
+  private async guard(fn: () => Promise<string>) {
+    try {
+      const sig = await fn();
+      return new TxnSignature(this.program, sig, this.state);
+    } catch (e) {
+      this.state.notify("warning", "User rejected txn");
+    }
   }
 
-  async vote(repo: Repo, voteType: VoteType): Promise<TxnSignature> {
-    const sig = await this.program.methods
-      .voteRepo(Adapter.voteRepo({ repo, voteType }))
-      .accounts({
-        voter: this.wallet.publicKey,
-      })
-      .rpc();
+  async propose(payload: AddRepoPayload): Promise<TxnSignature | undefined> {
+    return this.guard(() =>
+      this.program.methods
+        .addRepo(payload)
+        .accounts({ publisher: this.wallet.publicKey })
+        .rpc()
+    );
+  }
 
-    return new TxnSignature(this.program, sig, this.notify);
+  async vote(
+    repo: Repo,
+    voteType: VoteType
+  ): Promise<TxnSignature | undefined> {
+    return this.guard(() =>
+      this.program.methods
+        .voteRepo(Adapter.voteRepo({ repo, voteType, timestamp: Date.now() }))
+        .accounts({
+          voter: this.wallet.publicKey,
+        })
+        .rpc()
+    );
   }
 
   async subscribe(
     repo: Repo,
     userId: number,
     coupon: Coupon
-  ): Promise<TxnSignature> {
-    const sig = await this.program.methods
-      .subscribe({
-        repo,
-        coupon,
-        userId: userId.toString(),
-        timestamp: new anchor.BN(Date.now()),
-      })
-      .accounts({
-        signer: this.wallet.publicKey,
-      })
-      .rpc();
-
-    return new TxnSignature(this.program, sig, this.notify);
+  ): Promise<TxnSignature | undefined> {
+    return this.guard(() =>
+      this.program.methods
+        .subscribe({
+          repo,
+          coupon,
+          userId: userId.toString(),
+          timestamp: new anchor.BN(Date.now()),
+        })
+        .accounts({
+          signer: this.wallet.publicKey,
+        })
+        .rpc()
+    );
   }
 
   static getInstructions(
     program: Program<Idl>,
     wallet: AnchorWallet,
-    notify: Notify
+    state: StateManagers
   ): Instructions {
     if (!Instructions.instance) {
-      Instructions.instance = new Instructions(program, wallet, notify);
+      Instructions.instance = new Instructions(program, wallet, state);
     }
 
     return Instructions.instance;
