@@ -6,10 +6,11 @@ import {
   web3,
 } from "@coral-xyz/anchor";
 import { Repo } from "../data/repo";
-import { PublicKey } from "@solana/web3.js";
+import { Connection, PublicKey } from "@solana/web3.js";
 import { AnchorWallet } from "@solana/wallet-adapter-react";
 import { Vote, VoteAdapter } from "../data/vote";
 import { Subscription } from "../data/subscription";
+import { config } from "@/config";
 
 interface Accounts {
   repo: AccountClient;
@@ -100,6 +101,23 @@ export class Query {
       console.log((e as unknown as AnchorError).message);
       return undefined;
     }
+  }
+
+  static async getBalance(address: string) {
+    const owner = new PublicKey(address);
+
+    const [tokenAddress] = PublicKey.findProgramAddressSync(
+      [
+        owner.toBuffer(),
+        config.tokenProgramId.toBuffer(),
+        config.mint.toBuffer(),
+      ],
+      config.associatedTokenProgramId
+    );
+    console.log(tokenAddress);
+    // const info = await config.connection.getTokenAccountBalance(tokenAddress);
+    // return info.value.uiAmount;
+    return 0;
   }
 
   static getQuery(program: Program<Idl>, wallet: AnchorWallet): Query {

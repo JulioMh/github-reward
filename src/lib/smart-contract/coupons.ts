@@ -2,6 +2,7 @@ import { keccak256, toBuffer, ecsign } from "ethereumjs-utils";
 import { Coupon } from "./types";
 import * as borsh from "borsh";
 import { Repo, RepoAdapter, RepoPayload } from "../data/repo";
+import { ClaimAdapter, ClaimPayload } from "../data/claim";
 
 export class Coupons {
   private static hash(values: any): string {
@@ -31,6 +32,11 @@ export class Coupons {
 
   static gitHubId(id: number): Coupon {
     const serialized = borsh.serialize("string", id.toString());
+    return Coupons.build(serialized);
+  }
+
+  static claim(claim: ClaimPayload): Coupon {
+    const serialized = ClaimAdapter.serialize(claim);
     return Coupons.build(serialized);
   }
 }

@@ -8,6 +8,8 @@ import { Fetchers } from "@/utils/fetchers";
 import { TxnSignature } from "@/lib/smart-contract/txn_signature";
 import { useProgramStore } from "../providers/SmartContractProvider";
 import { useLoading } from "@/lib/hooks/useLoading";
+import { isValidException } from "@/lib/exceptions";
+import { useNotify } from "@/lib/hooks/useNotify";
 
 export const SubscriptionAction = ({
   repo,
@@ -22,6 +24,7 @@ export const SubscriptionAction = ({
 }) => {
   const { query, sign, confirmation, loading } = useLoading();
   const session = useSessionStore((selector) => selector.session);
+  const notify = useNotify();
   const { client } = useProgramStore();
 
   const fetch = useCallback(async () => {
@@ -53,13 +56,21 @@ export const SubscriptionAction = ({
 
   const onClaim = async () => {
     if (!session || !client || !subscription) return;
-    const response = await query(() =>
+    const { payload, coupon, error } = await query<any>(() =>
       Fetchers.POST([
         "/subscription/claim",
         { repo, subscribedAt: subscription.subscribedAt.toNumber() },
       ])
     );
-    console.log(response);
+    if (isValidException(error)) {
+      notify("warning", error.msg);
+      return;
+    }
+    const tx = await sign(() =>
+      client.instructions.claim(repo, payload, coupon)
+    );
+    if (!tx) return;
+    await confirmation(tx, refetch);
   };
 
   const controllers = subscription ? (

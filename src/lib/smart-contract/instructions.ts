@@ -1,5 +1,5 @@
 import { Idl, Program } from "@coral-xyz/anchor";
-import { Repo } from "../data/repo";
+import { Repo, RepoAdapter } from "../data/repo";
 import { Adapter } from "./adapter";
 import { VoteType } from "../data/vote";
 import { AnchorWallet } from "@solana/wallet-adapter-react";
@@ -7,6 +7,7 @@ import { AddRepoPayload, Coupon } from "./types";
 import { TxnSignature } from "./txn_signature";
 import * as anchor from "@coral-xyz/anchor";
 import { StateManagers } from ".";
+import { ClaimPayload } from "../data/claim";
 
 export class Instructions {
   private static instance: Instructions;
@@ -29,6 +30,7 @@ export class Instructions {
       const sig = await fn();
       return new TxnSignature(this.program, sig, this.state);
     } catch (e) {
+      console.log(e);
       this.state.notify("warning", "User rejected txn");
     }
   }
@@ -64,13 +66,28 @@ export class Instructions {
     return this.guard(() =>
       this.program.methods
         .subscribe({
-          repo,
+          repo: Adapter.repo(repo),
           coupon,
           userId: userId.toString(),
           timestamp: new anchor.BN(Date.now()),
         })
         .accounts({
           signer: this.wallet.publicKey,
+        })
+        .rpc()
+    );
+  }
+
+  async claim(
+    repo: Repo,
+    claim: ClaimPayload,
+    coupon: Coupon
+  ): Promise<TxnSignature | undefined> {
+    return this.guard(() =>
+      this.program.methods
+        .claimRewards(Adapter.claim(repo, claim, coupon))
+        .accounts({
+          destination: this.wallet.publicKey,
         })
         .rpc()
     );

@@ -1,6 +1,7 @@
+import { Claim, ClaimPayload } from "../data/claim";
 import { Repo, RepoPayload } from "../data/repo";
 import { VoteType } from "../data/vote";
-import { VotePayload } from "./types";
+import { Coupon, VotePayload } from "./types";
 import * as anchor from "@coral-xyz/anchor";
 
 export class Adapter {
@@ -9,6 +10,22 @@ export class Adapter {
       name: repo.name,
       branch: repo.branch,
       owner: repo.owner,
+    };
+  }
+
+  static claim(
+    repo: Repo,
+    claim: Claim,
+    coupon: Coupon
+  ): { claim: ClaimPayload; repo: RepoPayload; coupon: Coupon } {
+    return {
+      repo: this.repo(repo),
+      claim: {
+        ...claim,
+        commits: new anchor.BN(claim.commits),
+        timestamp: new anchor.BN(claim.timestamp),
+      },
+      coupon,
     };
   }
 

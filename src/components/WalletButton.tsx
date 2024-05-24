@@ -18,7 +18,7 @@ export const WalletButton = () => {
   const triedToConnect = useRef(false);
 
   const logOut = async () => {
-    await Fetchers.POST("/logout");
+    await Fetchers.POST(["/logout", {}]);
     window.location.href = `${window.location.origin}/login`;
   };
 
