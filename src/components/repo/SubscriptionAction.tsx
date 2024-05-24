@@ -59,7 +59,7 @@ export const SubscriptionAction = ({
     const { payload, coupon, error } = await query<any>(() =>
       Fetchers.POST([
         "/subscription/claim",
-        { repo, subscribedAt: subscription.subscribedAt.toNumber() },
+        { repo, subscribedAt: subscription.lastClaim.toNumber() },
       ])
     );
     if (isValidException(error)) {

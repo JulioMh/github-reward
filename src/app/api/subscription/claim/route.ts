@@ -15,13 +15,18 @@ const fetchCommits = async (
   {
     owner,
     name,
-    subscribedDate, //  ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ,
+    since, //  ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ,
     branch,
-  }: RepoPayload & { subscribedDate: Date }
+  }: RepoPayload & { since: Date }
 ) => {
-  return fetch(
-    `https://api.github.com/repos/${owner}/${name}/commits?since=${subscribedDate.toISOString()}&sha=${branch}&author=${author}`
-  ).then((res) => res.json());
+  try {
+    return fetch(
+      `https://api.github.com/repos/${owner}/${name}/commits?since=${since.toISOString()}&sha=${branch}&author=${author}`
+    ).then((res) => res.json());
+  } catch (e) {
+    console.log(e);
+    return [];
+  }
 };
 
 export const POST = async (req: NextRequest) => {
@@ -33,11 +38,11 @@ export const POST = async (req: NextRequest) => {
     user: { github },
   } = session;
   const body = await req.json();
-  const { repo, subscribedAt } = body;
+  const { repo, since } = body;
 
   const response: any[] = await fetchCommits(github.name, {
     ...repo,
-    subscribedDate: new Date(subscribedAt),
+    since: new Date(since),
   });
   const commits = response.length;
   if (!commits) {

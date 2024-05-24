@@ -9,7 +9,7 @@ export const Navbar = async () => {
 
   return (
     <nav className="flex fixed w-screen">
-      <div className="flex-1 flex justify-between m-8">
+      <div className="flex-1 flex justify-between items-center m-8">
         {session?.user ? (
           <>
             <Link href="/repos" className="ml-32">

@@ -104,8 +104,18 @@ export class Query {
   }
 
   static async getBalance(address: string) {
-    const owner = new PublicKey(address);
+    const tokenAddress = this.getTokenAddress(address);
+    try {
+      const info = await config.connection.getTokenAccountBalance(tokenAddress);
+      return info.value.uiAmount;
+    } catch (e) {
+      return 0;
+    }
+  }
 
+  static getTokenAddress(address: string | PublicKey) {
+    const owner =
+      typeof address === "string" ? new PublicKey(address) : address;
     const [tokenAddress] = PublicKey.findProgramAddressSync(
       [
         owner.toBuffer(),
@@ -114,10 +124,8 @@ export class Query {
       ],
       config.associatedTokenProgramId
     );
-    console.log(tokenAddress);
-    // const info = await config.connection.getTokenAccountBalance(tokenAddress);
-    // return info.value.uiAmount;
-    return 0;
+
+    return tokenAddress;
   }
 
   static getQuery(program: Program<Idl>, wallet: AnchorWallet): Query {

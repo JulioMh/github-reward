@@ -8,6 +8,7 @@ import { TxnSignature } from "./txn_signature";
 import * as anchor from "@coral-xyz/anchor";
 import { StateManagers } from ".";
 import { ClaimPayload } from "../data/claim";
+import { Query } from "./query";
 
 export class Instructions {
   private static instance: Instructions;
@@ -83,11 +84,12 @@ export class Instructions {
     claim: ClaimPayload,
     coupon: Coupon
   ): Promise<TxnSignature | undefined> {
+    const destination = Query.getTokenAddress(this.wallet.publicKey);
     return this.guard(() =>
       this.program.methods
         .claimRewards(Adapter.claim(repo, claim, coupon))
         .accounts({
-          destination: this.wallet.publicKey,
+          destination,
         })
         .rpc()
     );
