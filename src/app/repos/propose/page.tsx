@@ -105,10 +105,12 @@ export default function ProposePage() {
       )}
       {loading ? (
         loading
-      ) : (
+      ) : branches.length ? (
         <Button onClick={onSubmit} disabled={error || owner === "" || !branch}>
           Propose
         </Button>
+      ) : (
+        <></>
       )}
     </div>
   );

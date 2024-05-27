@@ -16,12 +16,18 @@ export const useSessionStore = create<State & Action>((set) => ({
   setSession: (session: Session | null) => set(() => ({ session })),
 }));
 
-export const SessionProvider = ({ session }: { session: Session | null }) => {
+export const SessionProvider = ({
+  session,
+  children,
+}: {
+  session: Session | null;
+  children?: React.ReactNode;
+}) => {
   const setSession = useSessionStore((state) => state.setSession);
 
   useEffect(() => {
     setSession(session);
   }, [session, setSession]);
 
-  return <></>;
+  return children;
 };

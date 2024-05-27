@@ -32,6 +32,7 @@ export const SubscriptionAction = ({
     const sub = await query(() =>
       client.query.getSubscription(session.user.github.id, repo)
     );
+    console.log(sub?.lastClaim.toNumber());
     setSubscription(sub);
   }, [client, repo, session, setSubscription]);
 
@@ -59,7 +60,7 @@ export const SubscriptionAction = ({
     const { payload, coupon, error } = await query<any>(() =>
       Fetchers.POST([
         "/subscription/claim",
-        { repo, subscribedAt: subscription.lastClaim.toNumber() },
+        { repo, since: subscription.lastClaim.toNumber() },
       ])
     );
     if (isValidException(error)) {

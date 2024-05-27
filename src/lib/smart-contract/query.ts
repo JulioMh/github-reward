@@ -103,17 +103,22 @@ export class Query {
     }
   }
 
-  static async getBalance(address: string) {
-    const tokenAddress = this.getTokenAddress(address);
+  async getBalance(address?: string) {
+    const tokenAddress = this.getTokenAddress(
+      address ?? this.wallet.publicKey.toString()
+    );
     try {
-      const info = await config.connection.getTokenAccountBalance(tokenAddress);
+      const info =
+        await this.program.provider.connection.getTokenAccountBalance(
+          tokenAddress
+        );
       return info.value.uiAmount;
     } catch (e) {
       return 0;
     }
   }
 
-  static getTokenAddress(address: string | PublicKey) {
+  getTokenAddress(address: string | PublicKey) {
     const owner =
       typeof address === "string" ? new PublicKey(address) : address;
     const [tokenAddress] = PublicKey.findProgramAddressSync(

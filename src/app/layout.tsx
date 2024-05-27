@@ -31,10 +31,12 @@ export default async function RootLayout({
       <body>
         <WalletProvider>
           <Notifier>
-            <Navbar />
-            <SessionProvider session={session} />
-            <SmartContractProvider />
-            <div className="p-24">{children}</div>
+            <SessionProvider session={session}>
+              <SmartContractProvider>
+                <Navbar />
+                <div className="p-24">{children}</div>
+              </SmartContractProvider>
+            </SessionProvider>
           </Notifier>
         </WalletProvider>
       </body>
