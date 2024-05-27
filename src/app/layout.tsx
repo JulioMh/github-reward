@@ -12,6 +12,7 @@ import { Pixelify_Sans } from "next/font/google";
 const pixelify = Pixelify_Sans({
   subsets: ["latin"],
   display: "swap",
+  adjustFontFallback: false,
 });
 
 export const metadata: Metadata = {
