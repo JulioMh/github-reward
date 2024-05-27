@@ -6,8 +6,9 @@ import ThumbDownOutline from "@mui/icons-material/ThumbDownOffAlt";
 import ThumbDown from "@mui/icons-material/ThumbDownAlt";
 import { useCallback, useEffect, useState } from "react";
 import { Vote, VoteType } from "@/lib/data/vote";
-import { useProgramStore } from "../providers/SmartContractProvider";
+
 import { useLoading } from "@/lib/hooks/useLoading";
+import { useProgramStore } from "@/store/smart_contract";
 
 export const VoteAction = ({
   repo,
@@ -24,7 +25,7 @@ export const VoteAction = ({
     if (!client) return;
     const vote = await query(() => client.query.getVote(repo));
     setVote(vote);
-  }, [client, repo]);
+  }, [client, repo, query]);
 
   useEffect(() => {
     fetch();

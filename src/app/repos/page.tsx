@@ -1,6 +1,5 @@
 "use client";
 
-import { Loading } from "@/components/Loading";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
@@ -8,36 +7,21 @@ import { PublicKey } from "@solana/web3.js";
 import { Repo } from "@/lib/data/repo";
 import ProposedTable from "@/components/repo/tables/ProposedTable";
 import ApprovedTable from "@/components/repo/tables/ApprovedTable";
-import { useProgramStore } from "@/components/providers/SmartContractProvider";
 import { useLoading } from "@/lib/hooks/useLoading";
-import { useSearchParams } from "next/navigation";
-
-export enum TableType {
-  approved = "Approved",
-  proposed = "Proposed",
-}
-
-const fromStringToTableType = (value: string | null): TableType => {
-  return (
-    Object.values(TableType).find(
-      (target) => target.toLowerCase() === value?.toLowerCase()
-    ) ?? TableType.approved
-  );
-};
+import { TableType, fromStringToTableType, useTableStore } from "@/store/table";
+import { useProgramStore } from "@/store/smart_contract";
 
 export default function Repos() {
   const { client } = useProgramStore();
   const { query, loading } = useLoading();
-  const params = useSearchParams();
-  const table = params.get("table");
-  const [tableType, setTableType] = useState(fromStringToTableType(table));
+  const { tableType, setTable } = useTableStore();
   const [repos, setRepos] = useState<Repo[]>([]);
 
   const fetch = useCallback(async () => {
     if (!client) return;
     const repos = await query(() => client.query.getRepos());
     setRepos(repos);
-  }, [client]);
+  }, [client, query]);
 
   useEffect(() => {
     fetch();
@@ -46,6 +30,7 @@ export default function Repos() {
   const refetchItem = async (publicKey: PublicKey, index: number) => {
     if (!client) return;
     const newRepo = await query(() => client.query.refetchRepo(publicKey));
+    if (newRepo.approved) setTable(TableType.approved);
     setRepos(repos.map((repo, i) => (i === index ? newRepo : repo)));
   };
 
@@ -59,7 +44,7 @@ export default function Repos() {
           className="border-white bg-black text-center"
           name="select"
           value={tableType}
-          onChange={(e) => setTableType(fromStringToTableType(e.target.value))}
+          onChange={(e) => setTable(fromStringToTableType(e.target.value))}
         >
           <option>{TableType.approved}</option>
           <option>{TableType.proposed}</option>

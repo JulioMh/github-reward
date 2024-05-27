@@ -3,13 +3,16 @@ import { Dispatch, SetStateAction, useCallback, useEffect } from "react";
 import { Loading } from "../Loading";
 import { Subscription } from "@/lib/data/subscription";
 import { Button } from "../Button";
-import { useSessionStore } from "../providers/SessionProvider";
 import { Fetchers } from "@/utils/fetchers";
 import { TxnSignature } from "@/lib/smart-contract/txn_signature";
-import { useProgramStore } from "../providers/SmartContractProvider";
 import { useLoading } from "@/lib/hooks/useLoading";
 import { isValidException } from "@/lib/exceptions";
 import { useNotify } from "@/lib/hooks/useNotify";
+import { useBalance } from "@/lib/hooks/useBalance";
+import { useSessionStore } from "@/store/session";
+import { useProgramStore } from "@/store/smart_contract";
+
+export const dynamic = "force-dynamic";
 
 export const SubscriptionAction = ({
   repo,
@@ -23,6 +26,7 @@ export const SubscriptionAction = ({
   setSubscription: Dispatch<SetStateAction<Subscription | undefined>>;
 }) => {
   const { query, sign, confirmation, loading } = useLoading();
+  const { updateBalance } = useBalance();
   const session = useSessionStore((selector) => selector.session);
   const notify = useNotify();
   const { client } = useProgramStore();
@@ -32,9 +36,8 @@ export const SubscriptionAction = ({
     const sub = await query(() =>
       client.query.getSubscription(session.user.github.id, repo)
     );
-    console.log(sub?.lastClaim.toNumber());
     setSubscription(sub);
-  }, [client, repo, session, setSubscription]);
+  }, [client, repo, session, setSubscription, query]);
 
   useEffect(() => {
     fetch();
@@ -71,7 +74,10 @@ export const SubscriptionAction = ({
       client.instructions.claim(repo, payload, coupon)
     );
     if (!tx) return;
-    await confirmation(tx, refetch);
+    await confirmation(tx, () => {
+      refetch();
+      updateBalance();
+    });
   };
 
   const controllers = subscription ? (

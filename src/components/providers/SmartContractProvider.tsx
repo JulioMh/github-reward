@@ -15,21 +15,7 @@ import {
 import idl from "../../smart_contract.json";
 import { Loading } from "../Loading";
 import { Balance } from "@/lib/hooks/useBalance";
-
-type State = {
-  client?: SmartContract;
-  balance: Balance;
-};
-type Action = {
-  setClient: (client: SmartContract) => void;
-  setBalance: (balance: Balance) => void;
-};
-
-export const useProgramStore = create<State & Action>((set) => ({
-  balance: { amount: 0, loading: <Loading text="Loading" /> },
-  setClient: (client: SmartContract) => set((state) => ({ ...state, client })),
-  setBalance: (balance: Balance) => set((state) => ({ ...state, balance })),
-}));
+import { useProgramStore } from "@/store/smart_contract";
 
 export const SmartContractProvider = ({
   children,

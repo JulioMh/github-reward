@@ -104,7 +104,7 @@ export class Query {
   }
 
   async getBalance(address?: string) {
-    const tokenAddress = this.getTokenAddress(
+    const tokenAddress = Query.getTokenAddress(
       address ?? this.wallet.publicKey.toString()
     );
     try {
@@ -118,7 +118,7 @@ export class Query {
     }
   }
 
-  getTokenAddress(address: string | PublicKey) {
+  static getTokenAddress(address: string | PublicKey) {
     const owner =
       typeof address === "string" ? new PublicKey(address) : address;
     const [tokenAddress] = PublicKey.findProgramAddressSync(

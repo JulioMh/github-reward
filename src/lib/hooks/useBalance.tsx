@@ -1,5 +1,5 @@
 import { Loading } from "@/components/Loading";
-import { useProgramStore } from "@/components/providers/SmartContractProvider";
+import { useProgramStore } from "@/store/smart_contract";
 import { useCallback, useEffect } from "react";
 
 export interface Balance {

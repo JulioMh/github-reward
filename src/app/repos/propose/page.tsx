@@ -1,20 +1,20 @@
 "use client";
 
 import { Button } from "@/components/Button";
-import { Loading } from "@/components/Loading";
-import { useProgramStore } from "@/components/providers/SmartContractProvider";
 import { useLoading } from "@/lib/hooks/useLoading";
 import { useNotify } from "@/lib/hooks/useNotify";
 import { Fetchers } from "@/utils/fetchers";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { TableType } from "../page";
+import { TableType, useTableStore } from "@/store/table";
+import { useProgramStore } from "@/store/smart_contract";
 
 type Branch = { name: string; protected: boolean };
 
 export default function ProposePage() {
   const route = useRouter();
   const { query, sign, confirmation, loading } = useLoading();
+  const { setTable } = useTableStore();
   const client = useProgramStore((state) => state.client);
   const notify = useNotify();
 
@@ -33,9 +33,10 @@ export default function ProposePage() {
     const tx = await sign(() => client.instructions.propose(payload));
     if (!tx) return;
 
-    await confirmation(tx, () =>
-      route.push(`/repos?table=${TableType.proposed}`)
-    );
+    await confirmation(tx, () => {
+      setTable(TableType.proposed);
+      route.push(`/repos`);
+    });
   };
 
   const validate = async (e: any) => {
