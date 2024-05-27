@@ -1,4 +1,4 @@
-import { Connection, PublicKey } from "@solana/web3.js";
+import { Connection, PublicKey, clusterApiUrl } from "@solana/web3.js";
 
 const program = new PublicKey("8Jy1eMYr3fjGHBAbW5ebT5tTssXtB4BQpWRzZRHk4HMg");
 const [mintAddress] = PublicKey.findProgramAddressSync(
@@ -12,7 +12,7 @@ const tokenProgramId = new PublicKey(
 const associatedTokenProgramId = new PublicKey(
   "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
 );
-const connection = new Connection("http://127.0.0.1:8899");
+const connection = clusterApiUrl("devnet");
 
 export const config = {
   program,
