@@ -49,7 +49,7 @@ export const WalletProvider: FC<NodeProps> = ({ children }) => {
   );
 
   return (
-    <ConnectionProvider endpoint={"http://127.0.0.1:8899"}>
+    <ConnectionProvider endpoint={clusterApiUrl("devnet")}>
       <WalletProviderPkg wallets={wallets} autoConnect>
         <MaterialUIWalletDialogProvider>
           <WalletModalProvider>{children}</WalletModalProvider>
