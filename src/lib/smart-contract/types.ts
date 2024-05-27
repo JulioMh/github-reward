@@ -23,4 +23,5 @@ export type VotePayload = {
   repo: RepoPayload;
   timestamp: anchor.BN;
   voteType: Record<string, object>;
+  userId: string;
 };

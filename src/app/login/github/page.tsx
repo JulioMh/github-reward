@@ -7,8 +7,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { Loading } from "@/components/Loading";
 import { useNotify } from "@/lib/hooks/useNotify";
 import { useLocalStorage, useWallet } from "@solana/wallet-adapter-react";
-import { Exceptions, isValidException } from "@/lib/exceptions";
-import { prisma } from "@/lib/db";
+import { isValidException } from "@/lib/exceptions";
 
 export default function GitHubConnectWrapper() {
   return (
@@ -29,16 +28,6 @@ function GitHubConnect() {
   const state = searchParams.get("state");
   const [nonce, setNonce] = useLocalStorage<string | null>("nonce", null);
   const [error, setError] = useState([false, ""]);
-
-  const updateUser = async ({ id }: { id: string }) => {
-    if (!publicKey) return;
-    const res = await Fetchers.PUT([
-      `/user`,
-      { publicKey: publicKey.toString() },
-    ]);
-    if (!res.error) loggedIn();
-    else setError([true, res.error]);
-  };
 
   const loggedIn = () => {
     setNonce(null);
@@ -63,19 +52,6 @@ function GitHubConnect() {
   );
 
   if (isValidException(data) || error[0] || swrError || paramsError) {
-    if (!error[0] && data?.code === Exceptions.account_in_use.code) {
-      return (
-        <>
-          <span>This account is linked to another wallet</span>
-          <button
-            className="btn-primary"
-            onClick={() => updateUser(data.payload)}
-          >
-            Click here to change it
-          </button>
-        </>
-      );
-    }
     return (
       <>
         <span>

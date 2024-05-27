@@ -30,15 +30,18 @@ export class Adapter {
   }
 
   static voteRepo({
+    userId,
     voteType,
     repo,
     timestamp,
   }: {
+    userId: string;
     voteType: VoteType;
     repo: Repo;
     timestamp: number;
   }): VotePayload {
     return {
+      userId: userId.toString(),
       repo: this.repo(repo),
       timestamp: new anchor.BN(timestamp),
       voteType: {

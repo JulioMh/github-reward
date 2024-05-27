@@ -1,9 +1,6 @@
 import { NextRequest } from "next/server";
 import { login } from "@/session";
 
-import { Exceptions } from "@/lib/exceptions";
-import { prisma } from "@/lib/db";
-
 export const GET = async (req: NextRequest) => {
   const searchParams = req.nextUrl.searchParams;
   const code = searchParams.get("code");
@@ -32,32 +29,11 @@ export const GET = async (req: NextRequest) => {
     },
   }).then((r) => r.json());
 
-  const user =
-    (await prisma.user.findUnique({
-      where: {
-        github_id: json.id,
-      },
-    })) ??
-    (await prisma.user.create({
-      data: {
-        publicKey: publicKey,
-        github_name: json.name,
-        github_id: json.id,
-      },
-    }));
-
   const session = {
-    id: user.id,
     publicKey,
     github: { id: json.id, name: json.name, accessToken: token },
   };
   await login(session);
 
-  if (user.publicKey !== publicKey)
-    return Response.json({
-      ...Exceptions.account_in_use,
-      payload: { id: user.id },
-    });
-
-  return Response.json({ id: user.id });
+  return Response.json({ ok: true });
 };

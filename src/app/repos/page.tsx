@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-
 import { PublicKey } from "@solana/web3.js";
-import { Repo } from "@/lib/data/repo";
+import { Repo, eqRepo } from "@/lib/data/repo";
 import ProposedTable from "@/components/repo/tables/ProposedTable";
 import ApprovedTable from "@/components/repo/tables/ApprovedTable";
 import { useLoading } from "@/lib/hooks/useLoading";
@@ -30,8 +29,8 @@ export default function Repos() {
   const refetchItem = async (publicKey: PublicKey, index: number) => {
     if (!client) return;
     const newRepo = await query(() => client.query.refetchRepo(publicKey));
+    setRepos(repos.map((repo) => (eqRepo(newRepo, repo) ? newRepo : repo)));
     if (newRepo.approved) setTable(TableType.approved);
-    setRepos(repos.map((repo, i) => (i === index ? newRepo : repo)));
   };
 
   return (

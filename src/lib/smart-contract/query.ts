@@ -56,11 +56,11 @@ export class Query {
     return this.adapt<Repo>({ account, publicKey });
   }
 
-  async getVote(repo: Repo): Promise<Vote | null> {
+  async getVote(userId: number, repo: Repo): Promise<Vote | null> {
     const [votePda] = web3.PublicKey.findProgramAddressSync(
       [
         Buffer.from("vote"),
-        this.wallet.publicKey.toBuffer(),
+        Buffer.from(userId.toString()),
         repo.publicKey.toBuffer(),
       ],
       this.program.programId

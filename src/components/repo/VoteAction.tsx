@@ -9,6 +9,7 @@ import { Vote, VoteType } from "@/lib/data/vote";
 
 import { useLoading } from "@/lib/hooks/useLoading";
 import { useProgramStore } from "@/store/smart_contract";
+import { useSessionStore } from "@/store/session";
 
 export const VoteAction = ({
   repo,
@@ -19,21 +20,26 @@ export const VoteAction = ({
 }) => {
   const { client } = useProgramStore();
   const { sign, query, confirmation, loading } = useLoading();
+  const githubId = useSessionStore(
+    (selector) => selector.session?.user.github.id
+  );
   const [vote, setVote] = useState<Vote | null>();
 
   const fetch = useCallback(async () => {
-    if (!client) return;
-    const vote = await query(() => client.query.getVote(repo));
+    if (!client || !githubId) return;
+    const vote = await query(() => client.query.getVote(githubId, repo));
     setVote(vote);
-  }, [client, repo, query]);
+  }, [client, repo, query, githubId]);
 
   useEffect(() => {
     fetch();
   }, [fetch, repo]);
 
   const onVote = async (voteType: VoteType) => {
-    if (!client) return;
-    const tx = await sign(() => client.instructions.vote(repo, voteType));
+    if (!client || !githubId) return;
+    const tx = await sign(() =>
+      client.instructions.vote(githubId, repo, voteType)
+    );
     if (!tx) return;
     await confirmation(tx, refetch);
   };

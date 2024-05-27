@@ -30,9 +30,8 @@ export class Instructions {
     try {
       const sig = await fn();
       return new TxnSignature(this.program, sig, this.state);
-    } catch (e) {
-      console.log(e);
-      this.state.notify("warning", "User rejected txn");
+    } catch (e: any) {
+      this.state.notify("error", e.error.errorMessage ?? e.error.message);
     }
   }
 
@@ -46,12 +45,20 @@ export class Instructions {
   }
 
   async vote(
+    githubId: number,
     repo: Repo,
     voteType: VoteType
   ): Promise<TxnSignature | undefined> {
     return this.guard(() =>
       this.program.methods
-        .voteRepo(Adapter.voteRepo({ repo, voteType, timestamp: Date.now() }))
+        .voteRepo(
+          Adapter.voteRepo({
+            userId: githubId.toString(),
+            repo,
+            voteType,
+            timestamp: Date.now(),
+          })
+        )
         .accounts({
           voter: this.wallet.publicKey,
         })
