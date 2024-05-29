@@ -34,6 +34,9 @@ export default function ApprovedTable({
             refetch={() => refetch(repo.publicKey, i)}
           />
         ))}
+        {!repos.length && (
+          <span className="text-amber-500">No repos found</span>
+        )}
       </tbody>
     </table>
   );
